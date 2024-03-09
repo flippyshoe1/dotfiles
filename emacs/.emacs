@@ -54,6 +54,15 @@
 
 
 ;;; ide stuff
-(rc/require 'company)
+(rc/require 'company 'flycheck 'eglot)
 (add-hook 'after-init-hook 'global-company-mode)
+
+;; syntax checker flycheck
+(add-hook 'after-init-hook #'global-flycheck-mode)
+; error showing up console
+(with-eval-after-load 'flycheck
+  (flycheck-pos-tip-mode))
+;(setq flycheck-gcc-include-path '("/home/<user>/<project>"))
+(setq flycheck-disabled-checkers '(c/c++-clang))
+(setq flycheck-enabled-checkers '(c/c++-gcc))
 
