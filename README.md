@@ -1,5 +1,11 @@
-all of the dotfiles i use between computers
+all of the dotfiles i use between computers\
 only works on linux, windows support in the future (but i dont promise anything)
+
+requirements:\
+a linux distrobution (preferably arch/debian based)\
+emacs\
+alacritty (preferably over version 0.13 unless you want to use the yaml format)\
+i3
 
 dependencies (debian and derivatives)
 ```shell
@@ -17,5 +23,5 @@ to automatically add the config files (but dont be surprised when you gotta inte
 ./setup.sh
 ```
 
-only reason its public is that i wont have to bother logging in every time i wanna use it
+only reason its public is that i wont have to bother logging in every time i wanna use it\
 do whatever you want with it
