@@ -2,7 +2,7 @@ all of the dotfiles i use between computers\
 only works on linux, windows support in the future (but i dont promise anything)
 
 requirements:\
-a linux distrobution (preferably arch/debian based)\
+a linux distribution (preferably arch/debian based)\
 emacs\
 alacritty (preferably over version 0.13 unless you want to use the yaml format)\
 i3
