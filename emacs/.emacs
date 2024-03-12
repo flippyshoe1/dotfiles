@@ -34,6 +34,7 @@
 (menu-bar-mode 0)
 (scroll-bar-mode 0)
 (column-number-mode 1)
+(add-hook 'prog-mode-hook #'display-line-numbers-mode)
 (show-paren-mode 1)
 
 (rc/require 'solarized-theme)
