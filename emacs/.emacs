@@ -58,3 +58,5 @@
 (rc/require 'company)
 (add-hook 'after-init-hook 'global-company-mode)
 
+(rc/require 'eglot 'flycheck)
+(global-flycheck-mode +1)
