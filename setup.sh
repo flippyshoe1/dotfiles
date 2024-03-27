@@ -37,3 +37,6 @@ symlinkFile alacritty .config
 
 # link emacs
 symlinkFile emacs/.emacs
+
+# link zsh/
+symlinkFile zsh/.zshrc 
