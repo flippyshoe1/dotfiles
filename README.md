@@ -15,7 +15,7 @@ apt install emacs alacritty i3 zsh zsh-syntax-highlighting
 
 dependencies (arch and derivatives)
 ```shell
-pacman -S emacs alacritty i3 zsh zsh-syntax-highlighting
+pacman -S emacs alacritty i3 zsh zsh-syntax-highlighting rofi
 ```
 
 to automatically add the config files (but dont be surprised when you gotta intervene)
