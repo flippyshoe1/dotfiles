@@ -1,10 +1,18 @@
 ;;; package repos
 (require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/") t)
+
+;; problematic code ?
+;;(add-to-list 'package-archives
+;;             '("melpa" . "https://melpa.org/packages/") t)
 ;; (add-to-list 'package-archives
 ;;              '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 
+(setq package-archives '(("org" . "http://orgmode.org/elpa/")
+                         ("melpa" . "https://melpa.org/packages/")
+                         ("gnu" . "https://elpa.gnu.org/packages/")))
+
+;;(custom-set-variables
+;; '(gnutls-algorithm-priority "normal:-vers-tls1.3"))
 
 ;;; package management functions i stole from tsoding
 (defvar rc/package-contents-refreshed nil)
@@ -43,7 +51,7 @@
 
 ;; moe??
 (rc/require 'moe-theme)
-(load-theme 'moe-dark)
+(load-theme 'moe-dark t)
 
 ;;; ido
 (rc/require 'smex 'ido-completing-read+)
