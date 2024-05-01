@@ -49,9 +49,9 @@
 ;;(rc/require 'solarized-theme)
 ;;(load-theme 'solarized-dark t)
 
-;; moe??
-(rc/require 'moe-theme)
-(load-theme 'moe-dark t)
+;; monokai
+(rc/require 'monokai-theme)
+(load-theme 'monokai t)
 
 ;;; ido
 (rc/require 'smex 'ido-completing-read+)
@@ -74,10 +74,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("3db9833382bb7a23932e65a6e768a9be72998967aef95d31cee3226e609544c2" "b11edd2e0f97a0a7d5e66a9b82091b44431401ac394478beb44389cf54e6db28" "04aa1c3ccaee1cc2b93b246c6fbcd597f7e6832a97aaeac7e5891e6863236f9f" "6fc9e40b4375d9d8d0d9521505849ab4d04220ed470db0b78b700230da0a86c1" default))
  '(package-selected-packages
-   '(moe-theme color-theme-sanityinc-tomorrow solarized-theme smex ido-completing-read+ flycheck eglot company)))
+   '(monokai-theme smex moe-theme ido-completing-read+ company)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
