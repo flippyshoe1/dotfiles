@@ -1,84 +1,86 @@
-;;; package repos
-(require 'package)
+;;; Package management (and custom functions)
+(when (>= emacs-major-version 24)
+  (progn
+    ;; load emacs 24's package system.
+    (require 'package)
+    ;; Add MELPA repository.
+    (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
+  (when (< emacs-major-version 27) (package-initialize)))
 
-;; problematic code ?
-;;(add-to-list 'package-archives
-;;             '("melpa" . "https://melpa.org/packages/") t)
-;; (add-to-list 'package-archives
-;;              '("melpa-stable" . "https://stable.melpa.org/packages/") t)
-
-(setq package-archives '(("org" . "http://orgmode.org/elpa/")
-                         ("melpa" . "https://melpa.org/packages/")
-                         ("gnu" . "https://elpa.gnu.org/packages/")))
-
-;;(custom-set-variables
-;; '(gnutls-algorithm-priority "normal:-vers-tls1.3"))
-
-;;; package management functions i stole from tsoding
-(defvar rc/package-contents-refreshed nil)
-
-(defun rc/package-refresh-contents-once ()
-  (when (not rc/package-contents-refreshed)
-    (setq rc/package-contents-refreshed t)
-    (package-refresh-contents)))
-
-(defun rc/require-one-package (package)
+(defun pm/require-package (package)
   (when (not (package-installed-p package))
-    (rc/package-refresh-contents-once)
     (package-install package)))
 
-(defun rc/require (&rest packages)
+(defun pm/require (&rest packages)
   (dolist (package packages)
-    (rc/require-one-package package)))
+    (pm/require-package package)))
 
-;;; default
-(setq inhibit-startup-message t)
-(recentf-mode 1)
-(setq backup-directory-alist '(("" . "~/.emacs.d/recovery")))
+;;; Basic UI changes
+(setq inhibit-startup-message t)     ;; no startup message
+(global-display-line-numbers-mode 1) ;; numbers on the side!!
+;; no bloat on my machine!
+(menu-bar-mode -1) 
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+;; check if the jetbrainsmono nerd font is downloaded and if it is then use it
+;; get it from https://www.nerdfonts.com/font-downloads and install it at ~/.local/share/fonts
+(if (find-font(font-spec :name "JetBrainsmono Nerd font"))
+    (add-to-list 'default-frame-alist
+	     '(font . "JetBrainsMono Nerd font-12")))
 
+;;; Handy settings
+(recentf-mode 1)    ;; remembers the last files you edited in emacs (use M-x recentf-open-files to use)
+(save-place-mode 1) ;; remembers where you've last been in a file after closing it
+;; prevents "littering" by making the custom emacs settings go elsewhere :)
+(setq custom-file(locate-user-emacs-file "custom-vars.el"))
+(load custom-file 'noerror 'nomessage)
+(global-auto-revert-mode 1) ;; autoupdate the file if it has been changed
 
-;;; theme
-(tool-bar-mode 0)
-(menu-bar-mode 0)
-(scroll-bar-mode 0)
-(column-number-mode 1)
-(add-hook 'prog-mode-hook #'display-line-numbers-mode)
-(show-paren-mode 1)
+;;; Backup?
+;(setq make-backup-files t)    ;; creates a backup file
+;(setq version-control t)      ;; make multiple versions of the backup
+;(setq backup-by-copying t)    ;; preserve metadata when making backups
+;(setq vc-make-backup-files t) ;; make backups even in version controlled dirs
 
-;; solarized
-;;(rc/require 'solarized-theme)
-;;(load-theme 'solarized-dark t)
-
-;; monokai
-(rc/require 'monokai-theme)
-(load-theme 'monokai t)
-
-;;; ido
-(rc/require 'smex 'ido-completing-read+)
-
-(require 'ido-completing-read+)
-
-(ido-mode 1)
+;;; Ido and Smex
+(require 'ido) ;; the ido part
+(ido-mode t)
 (ido-everywhere 1)
-(ido-ubiquitous-mode 1)
 
+(pm/require 'smex) ;; the smex part
 (global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
-;;; ide stuff
-(rc/require 'company)
-(add-hook 'after-init-hook 'global-company-mode)
+;;; Theme
+(pm/require 'color-theme-sanityinc-tomorrow)
+(load-theme 'sanityinc-tomorrow-night t)
+;(load-theme 'sanityinc-tomorrow-bright t)
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(monokai-theme smex moe-theme ido-completing-read+ company)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+;;; Electric Pair Mode (autoinsert matching delimiters)
+;;; https://www.emacswiki.org/emacs/ElectricPair
+(electric-pair-mode 1) ;; TODO: limit this to C source files?
+
+;;; Company mode (completions)
+;;; https://company-mode.github.io/
+(pm/require 'company)
+(global-company-mode)
+
+;;; Tagging
+;; TODO: look into GNU Global source tagging system?
+
+;;; Hideshow
+;;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Hideshow.html
+(hs-minor-mode 1)
+
+;;; C-Mode (or cc mode or whatever the fuck)
+;;; https://cc-mode.sourceforge.net/html-manual/index.html
+(setq c-basic-offset 2) ;; tab offset
+;; indentation styles apparently?
+(setq c-default-style '((java-mode . "java")
+                        (awk-mode . "awk")
+                        (other . "linux")))
+
+;; forces comment commands to insert line comments on c source files rather than block comments
+;; i.e. // instead of /* */
+(add-hook 'c-mode-hook (lambda()
+			 (interactive)
+			 (c-toggle-comment-style -1)))
