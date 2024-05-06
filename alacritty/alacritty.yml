@@ -1,1 +1,19 @@
-/home/flippyshoe/Dev/internal/dotfiles/alacritty/.old/alacritty.yml
+import:
+ - ~/.config/alacritty/tomorrow_night.yaml
+
+# since i cant do a check on whether the font is installed or not
+# if the script does screw up, download the terminess font from https://www.nerdfonts.com/font-downloads
+font:
+ normal:
+  family: Terminess Nerd Font
+  style: Regular
+
+ bold:
+  family: Terminess Nerd Font
+  style: Bold
+
+ italic:
+  family: Terminess Nerd Font
+  style: Italic
+
+ size: 12

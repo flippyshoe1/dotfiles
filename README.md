@@ -4,12 +4,13 @@ only works on linux, windows support in the future (but i dont promise anything)
 requirements:\
 a linux distribution (preferably arch/debian based)\
 emacs\
-alacritty (preferably over version 0.13 unless you want to use the yaml format)\
+alacritty\
 i3
 
 dependencies (debian and derivatives)
 ```shell
-## notice for debian: alacritty is behind version 0.13, thus using yaml instead of toml, the yaml version of the config is in the .old directory
+## special note abt debian: current alacritty package in debian repos still uses the yml config format
+##                          once it finally updates ill rewrite the config to toml
 apt install emacs alacritty i3 zsh zsh-syntax-highlighting rofi
 ```
 
