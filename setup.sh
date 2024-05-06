@@ -36,7 +36,8 @@ symlinkFile i3 .config
 symlinkFile alacritty .config
 
 # link emacs
-symlinkFile emacs/.emacs
+symlinkFile .emacs
 
-# link zsh/
-symlinkFile zsh/.zshrc 
+# link zsh
+symlinkFile .zshrc
+symlinkFile zsh .config
