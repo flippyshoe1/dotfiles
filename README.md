@@ -7,6 +7,9 @@ emacs\
 alacritty\
 i3
 
+optional requirements:\
+JetBrainsMono and Terminus nerd fonts (from https://www.nerdfonts.com/font-downloads)
+
 dependencies (debian and derivatives)
 ```shell
 ## special note abt debian: current alacritty package in debian repos still uses the yml config format
