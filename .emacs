@@ -37,7 +37,7 @@
 (global-auto-revert-mode 1) ;; autoupdate the file if it has been changed
 
 ;;; Backup?
-;(setq make-backup-files t)    ;; creates a backup file
+(setq make-backup-files nil)   ;; creates a backup file
 ;(setq version-control t)      ;; make multiple versions of the backup
 ;(setq backup-by-copying t)    ;; preserve metadata when making backups
 ;(setq vc-make-backup-files t) ;; make backups even in version controlled dirs
@@ -69,7 +69,8 @@
 
 ;;; Hideshow
 ;;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Hideshow.html
-(hs-minor-mode 1)
+;;; emacs keeps giving me an annoying warning every time i launch it, so ill disable it for now
+;(hs-minor-mode 1)
 
 ;;; C-Mode (or cc mode or whatever the fuck)
 ;;; https://cc-mode.sourceforge.net/html-manual/index.html
