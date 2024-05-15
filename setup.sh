@@ -41,3 +41,8 @@ symlinkFile .emacs
 # link zsh
 symlinkFile .zshrc
 symlinkFile zsh .config
+
+## now considering how the default zsh config includes a .local/bin directory to path
+## just link the bin dir in the dotfiles folder to there :3
+## (stupid solution but it works)
+symlinkFile bin .local

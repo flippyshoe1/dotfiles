@@ -1,0 +1,59 @@
+#!/usr/bin/bash
+
+## check for args
+if [ "$#" -ne 1 ]; then
+    echo "invalid amount of args, second arg is the location of the dir"
+    exit
+fi
+echo "attempting to generate a c project directory"
+
+## create the directories
+echo "creating directories"
+path=$1
+mkdir "$path/src"
+mkdir "$path/include"
+
+## create the makefile
+echo "creating the makefile"
+mf="$path/Makefile"
+touch $mf
+read -r -d '' mfcontents << EOF
+## files to be used
+\nSRC=./src/*.c
+\nINC=./include/
+\nOBJ=./*.o
+\n
+\n## variables (change for your liking)
+\nCOMPFLAGS=-Wall -Wextra -pedantic
+\nLINKFLAGS=
+\nTARGET=temp
+\n
+\n## the actual important stuff
+\nall:\$(TARGET)
+\n
+\n\$(TARGET): obj
+\n\tcc -o \$@ \$(OBJ) \$(LINKFLAGS)
+\n
+\nobj:
+\n\tcc \$(COMPFLAGS) -I \$(INC) -c \$(SRC)
+\n
+\nclean:
+\n\trm -f \$(OBJ) \$(TARGET)
+EOF
+echo -e $mfcontents >> $mf
+
+## create a small main.c to test
+echo "creating a temporary main.c"
+mainc="$path/src/main.c"
+touch $mainc
+
+echo -e $(cat << EOF
+#include <stdio.h>
+\n
+\nint main(){
+\n\tprintf("Hello world!");
+\n\treturn 0;
+\n}\n
+EOF
+	  
+) >> $mainc
