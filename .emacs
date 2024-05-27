@@ -85,3 +85,30 @@
 (add-hook 'c-mode-hook (lambda()
 			 (interactive)
 			 (c-toggle-comment-style -1)))
+
+;;; the "project directory variable"
+;;; so that i dont have to worry about what directory the buffer is in
+(defvar project-dir nil)
+
+;; to functions to set the project-dir variable
+(defun set-pd-to-buffer ()
+  "swaps the project-directory variable to the cwd of the buffer"
+  (interactive)
+  (setq project-dir default-directory))
+
+(defun set-pd-to-input (directory)
+  "swaps the project-directory variable to the input of the user"
+  (interactive "Dset project-directory to: ")
+  (setq project-dir directory))
+
+;; print the pd for debug
+(defun get-pd ()
+  (interactive)
+  (message "project-dir is set to: %s" project-dir))
+
+;; a hacky function to temporarily overwrite default-directory for compilation
+(defun pdcomp ()
+  "uses the compile command in project-directory"
+  (interactive)
+  (setq default-directory project-dir)
+  (call-interactively #'compile))
