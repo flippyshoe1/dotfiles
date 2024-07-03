@@ -1,0 +1,182 @@
+#!/usr/bin/env python3
+
+'''
+PTM - Project Template Manager
+
+the script will "capture" and recreate directories by converting them into files
+2 main commands: capture and replicate
+other commands include: help, list
+
+structure:
+ptm <command> <template name> <directory path>
+
+TODO:
+ - make the code prettier:
+   its currently one gigantic salad of loops and nests, modulate it to functions
+ - quality of life:
+   add a help command to display help, a list command to display available templates and better error messages
+ - support for scripting:
+   in the offchance starting a template requires something larger, or commands must be used to initialise the template, include a shell script segment
+   (im going to delay this one because it will require working on sanitising)
+
+'''
+
+import sys
+import os
+
+# get the template directory, default location is the .config directory
+# maybe include the xdg config dir standard idk
+user = os.getenv("USER")
+templates_directory = "/home/"+user+"/.config/ptm/"
+
+# every object in the queue will be a dictionary with the following keys: {name, type, owner}
+# the values should be obvious
+def append_file(path: str, stack: list):
+    split = path.split('/')
+    stack.append({'name':split[-1], 'type':"file", 'owner':split[-2]})
+
+def append_contents(path: str, stack: list):
+    split = path.split('/')
+    stack.append({'name':split[-1], 'type':"dir", 'owner':split[-2]})
+
+    contents = os.listdir(path)
+    for item in contents:
+        item_path = path + "/" + item # path for the item
+        if(os.path.isdir(item_path)):
+            append_contents(item_path, data)
+        else:
+            append_file(item_path, data)
+
+            
+def file_to_text(f , depth: int, path: str):
+    gap='\t'*depth    # signify the depth by tabs
+    p=path.split("/") # get the path... directories? (idk what to call them)
+    
+    # write the name of the file
+    f.write(gap+":f "+p[-1]+"\n")
+    
+    # open the file for reading so we can get its contents
+    with open(path, 'r') as temp:
+        lines=temp.readlines()
+        for line in lines:
+            f.write(gap+":l "+line)
+
+
+def dir_to_text(f , depth: int, name: str):
+    # signify the depth by tabs
+    gap='\t'*depth
+
+    # open the file for reading so we can get its contents
+    f.write(gap+":d "+name+"\n")
+
+if __name__ == '__main__':
+    if len(sys.argv) <= 3:
+        print("insufficient amount of variables")
+        exit(1)
+
+    # worlds ugliest chain of variable definition    
+    program, command, name, path, *argv = sys.argv
+
+    os.makedirs(templates_directory, exist_ok=True)
+
+    ## we try to "capture" a project directory as a templete, i.e. serialising the contents of the directory as a text file to be parsed
+    ## it will be written in its own custom format, because im not writing an xml interpeter for this
+    if command=="capture":
+        contents = []; # where we store the contents of a directory, and later the depth of a path
+        data = [];     # where we store the ""serialised information"" of the project
+
+        # try opening the directory
+        try:
+            contents = os.listdir(path)
+        except:
+            print("invalid path")
+            exit(1)
+
+        # assume the contents are available
+        # a queue will be created containing all the files and subdirectories within the captured directory
+        # every object in the queue will be a dictionary with the following keys: {name, type, owner}
+        # the values should be obvious
+        for item in contents:
+            item_path = path + "/" + item # path for the item
+            if(os.path.isdir(item_path)):
+                append_contents(item_path, data)
+            else:
+                append_file(item_path, data)
+
+        # now that the data is set and we got all the files in a readable order
+        # we iterate through the queue, and writing to the appropriate file.
+        contents.clear() # clean up the contents list, reuse it as our "path stack"
+                         # its length is going to represent how many tabs we need
+
+        template_file = templates_directory+name+".template"
+        template_file=open(template_file, 'w+')
+        
+        # iterate over the data
+        for item in data:
+            if item["type"] == "dir":
+                # write the directory name
+                dir_to_text(template_file, len(contents), item["name"])
+                # and add it to the path stack
+                contents.append(item["name"])
+            elif item["type"] == "file":
+                if len(contents)>0 and item["owner"]!=contents[-1]:
+                    contents.pop()
+
+                p = path+"/" + ('/'.join(contents)) + "/"+item["name"]
+                file_to_text(template_file, len(contents), p)
+
+        exit(0)
+                
+    ## we try to "replicate" a project using its template, i.e. parsing the contents of the template file and replicating it to the filesystem
+    ## rules for the file are kinda simple:
+    ## 1. each line specifies an item, it could be a directory (:d), file (:f) or line (:l)
+    ## 2. tabs are the depth of a directory/file, the bigger the deeper, if an item is deeper than the item above, it is its child
+    ## 3. if the item is a line, it will be written to the last file specified (before the item)
+    ## 4. lines can only be children of files, files may be children of directories, 
+    elif command=="replicate":
+        # make sure the template file exists
+        template_name = name+".template"
+        if not os.path.isfile(templates_directory+"/"+template_name):
+            print("invalid template name")
+            exit(1)
+        
+        template_file=open(templates_directory+template_name, 'r')
+        path_stack = []
+        tlines = template_file.readlines()
+        pfile = "" # the latest file the parser found
+
+        # does this introduce an attack vector? can you inject code with this?
+        # probably not, since this isnt going to execute anything, we just it to a file
+        
+        for line in tlines:
+            print(path_stack)
+            
+            # count the tabs in the start of the line, thats the depth
+            tabs=0
+            while line[tabs]=='\t':
+                tabs+=1
+            
+            # check we start with a type and that the file is parsable still
+            type=line[0+tabs:2+tabs]
+            assert type[0]==':'
+                
+            # if the depth is shallower, we stepped back a directory/file
+            # why len-1? because tabs can technically be 0, and depth 0 isnt a thing
+            if len(path_stack)>0 and tabs<=(len(path_stack)-1):
+                path_stack.pop()
+
+            # if its a directory, add it to the stack and create it in the filesystem
+            if type[1]=='d':
+                path_stack.append( line[3+tabs:-1] )
+                os.mkdir(path + '/' + ('/'.join(path_stack)))
+            elif type[1]=='f':
+                pfile=line[3+tabs:-1]
+                open(path + '/' + ('/'.join(path_stack)) + "/" + pfile, "x")
+                pfile=open(path + '/' + ('/'.join(path_stack)) + "/" + pfile, "w")
+            elif type[1]=='l':
+                pfile.write(line[3+tabs:-1]+'\n')
+            
+    else:
+        print("invalid command")
+        exit(1)
+    
