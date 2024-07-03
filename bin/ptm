@@ -113,15 +113,16 @@ if __name__ == '__main__':
         
         # iterate over the data
         for item in data:
+            print(contents)
+            if len(contents)>0 and item["owner"]!=contents[-1]:
+                    contents.pop()
+                    
             if item["type"] == "dir":
                 # write the directory name
                 dir_to_text(template_file, len(contents), item["name"])
                 # and add it to the path stack
                 contents.append(item["name"])
             elif item["type"] == "file":
-                if len(contents)>0 and item["owner"]!=contents[-1]:
-                    contents.pop()
-
                 p = path+"/" + ('/'.join(contents)) + "/"+item["name"]
                 file_to_text(template_file, len(contents), p)
 
