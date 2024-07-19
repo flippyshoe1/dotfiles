@@ -69,13 +69,37 @@ def dir_to_text(f , depth: int, name: str):
     # open the file for reading so we can get its contents
     f.write(gap+":d "+name+"\n")
 
+def print_help(message):
+    if message!="":
+        print(message)
+    print("PTM - Project Template Manger")
+    print("USAGE: ptm <command> <template name> <path to directory>")
+    print("AVAILABLE COMMANDS: capture, replicate")
+    print("AVAILABLE SUBCOMMANDS (commands that dont require the final 2 args): help, list")
+    
 if __name__ == '__main__':
-    if len(sys.argv) <= 3:
+    if len(sys.argv) <= 1:
         print("insufficient amount of variables")
         exit(1)
 
     # worlds ugliest chain of variable definition    
-    program, command, name, path, *argv = sys.argv
+    program, command,  *argv = sys.argv
+
+    if len(argv) < 2:
+        if command=="list":
+            print("currently available templates are:")
+            contents=os.listdir(templates_directory)
+            for template in contents:
+                if template[-9:]==".template":
+                    print("\t"+template[:-9])
+
+        else:
+            print_help("")
+
+        exit(0)
+
+    
+    name, path, *argv = sys.argv
 
     os.makedirs(templates_directory, exist_ok=True)
 
@@ -176,8 +200,7 @@ if __name__ == '__main__':
                 pfile=open(path + '/' + ('/'.join(path_stack)) + "/" + pfile, "w")
             elif type[1]=='l':
                 pfile.write(line[3+tabs:-1]+'\n')
-            
+
     else:
-        print("invalid command")
+        print_help("invalid command!")
         exit(1)
-    
