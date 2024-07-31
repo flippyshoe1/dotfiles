@@ -17,6 +17,7 @@ echo '>>> starting setup...'
 ## prerequisite: getting the distrobution, package manager and optionally flatpak
 echo '>>> asserting prerequisites'
 
+SCRIPT_DIR="$( cd -- "$dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 if [ -f /etc/*release ]; then
     OS=$(grep '^ID=' /etc/*release | sed "s/ID=//g")
     echo "[-] asserting distribution ID is: $OS"
@@ -26,6 +27,8 @@ else
 fi
 
 if [[ $OS == "debian" ]]; then
+    PM="apt"
+elif [[ $OS == "linuxmint" ]]; then
     PM="apt"
 fi
 echo "[-] asserting package manager is going to be: $PM"
