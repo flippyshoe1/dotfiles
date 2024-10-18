@@ -30,6 +30,8 @@ if [[ $OS == "debian" ]]; then
 fi
 echo "[-] asserting package manager is going to be: $PM"
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 echo "[=] prerequesites successfuly filled!"
 ## stage 1: updating the package manager repos and installing the necessary programs
 echo '>>> stage 1: downloading the necessary packages'
@@ -57,7 +59,7 @@ run_optional_cmd () {
     $command
 }
 
-get_dependencies emacs alacritty i3 zsh zsh-syntax-highlighting rofi
+get_dependencies emacs alacritty i3 zsh zsh-syntax-highlighting rofi feh picom
 
 echo "[=] packages successfuly installed!"
 ## stage 2: symbolic links and configurations
@@ -104,6 +106,9 @@ symlinkFile zsh .config
 ## just link the bin dir in the dotfiles folder to there :3
 ## (stupid solution but it works)
 symlinkFile bin .local
+
+# link .assets (images ill use)
+symlinkFile assets .assets
 
 echo "[=] configs have been managed!"
 ## stage 3: optional dependencies
