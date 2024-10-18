@@ -17,7 +17,6 @@ echo '>>> starting setup...'
 ## prerequisite: getting the distrobution, package manager and optionally flatpak
 echo '>>> asserting prerequisites'
 
-SCRIPT_DIR="$( cd -- "$dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 if [ -f /etc/*release ]; then
     OS=$(grep '^ID=' /etc/*release | sed "s/ID=//g")
     echo "[-] asserting distribution ID is: $OS"
@@ -34,6 +33,7 @@ fi
 echo "[-] asserting package manager is going to be: $PM"
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+echo "[-] script is running from: $SCRIPT_DIR"
 
 echo "[=] prerequesites successfuly filled!"
 ## stage 1: updating the package manager repos and installing the necessary programs
