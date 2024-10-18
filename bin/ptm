@@ -23,6 +23,7 @@ TODO:
 
 import sys
 import os
+import locale
 
 # get the template directory, default location is the .config directory
 # maybe include the xdg config dir standard idk
@@ -56,7 +57,8 @@ def file_to_text(f , depth: int, path: str):
     f.write(gap+":f "+p[-1]+"\n")
     
     # open the file for reading so we can get its contents
-    with open(path, 'r') as temp:
+    # NOTE: encoding can fuck this script up, possible options should be either utf-8 or latin-1 or ascii, trial and error should work
+    with open(path, 'r', encoding='latin-1') as temp:
         lines=temp.readlines()
         for line in lines:
             f.write(gap+":l "+line)
@@ -99,7 +101,7 @@ if __name__ == '__main__':
         exit(0)
 
     
-    name, path, *argv = sys.argv
+    name, path, *argv = argv
 
     os.makedirs(templates_directory, exist_ok=True)
 
@@ -133,11 +135,11 @@ if __name__ == '__main__':
                          # its length is going to represent how many tabs we need
 
         template_file = templates_directory+name+".template"
+        print(locale.getencoding())
         template_file=open(template_file, 'w+')
         
         # iterate over the data
         for item in data:
-            print(contents)
             if len(contents)>0 and item["owner"]!=contents[-1]:
                     contents.pop()
                     
@@ -174,7 +176,6 @@ if __name__ == '__main__':
         # probably not, since this isnt going to execute anything, we just it to a file
         
         for line in tlines:
-            print(path_stack)
             
             # count the tabs in the start of the line, thats the depth
             tabs=0
@@ -196,7 +197,7 @@ if __name__ == '__main__':
                 os.mkdir(path + '/' + ('/'.join(path_stack)))
             elif type[1]=='f':
                 pfile=line[3+tabs:-1]
-                open(path + '/' + ('/'.join(path_stack)) + "/" + pfile, "x")
+                open(path + '/' + ('/'.join(path_stack)) + "/" + pfile, "x", encoding=locale.getencoding())
                 pfile=open(path + '/' + ('/'.join(path_stack)) + "/" + pfile, "w")
             elif type[1]=='l':
                 pfile.write(line[3+tabs:-1]+'\n')
